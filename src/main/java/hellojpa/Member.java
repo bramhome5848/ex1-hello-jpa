@@ -8,6 +8,15 @@ public class Member {
 
     @Id
     private Long id;
+
+    public Member() {
+    }
+
+    public Member(Long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
     private String name;
 
     public Long getId() {
