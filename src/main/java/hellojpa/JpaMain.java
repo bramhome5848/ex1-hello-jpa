@@ -125,6 +125,8 @@ public class JpaMain {
             System.out.println("===================");
             */
 
+            //영속성 없애기
+            /*
             Member member = em.find(Member.class, 150L);
             member.setName("AAAA");
 
@@ -132,6 +134,23 @@ public class JpaMain {
             em.clear(); //영속성 컨텍스트에서 모든 엔티티 삭제 -> 1차 캐시 모두 삭제됨
 
             System.out.println("===================");
+            */
+
+            //Identity전략의 경우 예외적으로 .persist 순간에 쿼리를 날려버림 -> 키를 통해 영속성 유지를 위해서
+            Member member = new Member();
+            member.setName("C");
+            System.out.println("===================");
+            em.persist(member); //쿼리 실행후 -> jpa가 id값을 세팅 -> 영속성 컨텍스트의 pk값으로 사용
+            System.out.println("member.id = " + member.getId());
+            System.out.println("===================");
+
+            //나머지는 insert쿼리가 실행되지는 않고 key값만을 db에서 가져와서 영속성 컨텍스트를 만들어줌
+            //sequence Generator, TableGenerator
+            //allocationSize = 50의 경우
+            //DB에서 미리 50개를 inc 시킨 이후 -> 메모리 상에서 50개를 사용할 수 있음
+            //50개를 다 쓰기 전에는 call next value를 하지 않기 때문에 성능 최적화에 도움
+            //너무 큰 수를 사용하면 그 만큼 빈 숫자가 많이 생김 -> 적당히 50, 100개
+
             tx.commit();    //이 시점에 영속성 컨텍스트에 있는 것들에 대해서 쿼리가 날라감
         } catch(Exception e) {
             tx.rollback();
